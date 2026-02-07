@@ -1,5 +1,13 @@
-function greet(person) {
-    console.log(`Hello, ${person}!`);
-}
+class Settings {
+  constructor() {
+    this.options = {
+      theme: "Light",
+      notifications: true,
+      language: "English"
+    };
+  }
 
-greet(User);
+  getSettings() {
+    return this.options;
+  }
+}
