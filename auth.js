@@ -1,17 +1,19 @@
-class Auth {
-  static login(u, p) {
-    if (u === "admin" && p === "1234") {
+const Auth = {
+  login(username, password) {
+    const savedPass = localStorage.getItem("password") || "1234";
+
+    if (username === "admin" && password === savedPass) {
       localStorage.setItem("loggedIn", "true");
       return true;
     }
     return false;
-  }
+  },
 
-  static logout() {
+  logout() {
     localStorage.removeItem("loggedIn");
-  }
+  },
 
-  static isLoggedIn() {
+  isLoggedIn() {
     return localStorage.getItem("loggedIn") === "true";
   }
-}
+};
