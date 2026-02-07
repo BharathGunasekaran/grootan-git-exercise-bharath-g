@@ -1,3 +1,5 @@
+const profileInstance = new UserProfile();
+
 function showHome() {
   document.getElementById("content").innerHTML = `
     <h3>Home</h3>
@@ -6,11 +8,19 @@ function showHome() {
 }
 
 function showProfile() {
-  const user = new UserProfile().getProfile();
+  const user = profileInstance.getProfile();
 
   document.getElementById("content").innerHTML = `
     <h3>Profile</h3>
-    <p><b>ID:</b> ${user.id}</p>
+
+    <img id="avatarPreview"
+         src="${user.avatar || 'https://via.placeholder.com/120'}"
+         width="120"
+         style="border-radius:50%; border:1px solid #ccc"/>
+
+    <br/><br/>
+    <input type="file" onchange="uploadAvatar(event)" />
+
     <p><b>Name:</b> ${user.name}</p>
     <p><b>Email:</b> ${user.email}</p>
     <p><b>Age:</b> ${user.age}</p>
@@ -19,13 +29,26 @@ function showProfile() {
   `;
 }
 
-function showSettings() {
-  const settings = new Settings().getSettings();
+function uploadAvatar(event) {
+  const file = event.target.files[0];
+  if (!file) return;
 
+  const reader = new FileReader();
+
+  reader.onload = function (e) {
+    const base64Image = e.target.result;
+
+    profileInstance.setAvatar(base64Image);
+
+    document.getElementById("avatarPreview").src = base64Image;
+  };
+
+  reader.readAsDataURL(file);
+}
+
+function showSettings() {
   document.getElementById("content").innerHTML = `
     <h3>Settings</h3>
-    <p><b>Theme:</b> ${settings.theme}</p>
-    <p><b>Notifications:</b> ${settings.notifications ? "On" : "Off"}</p>
-    <p><b>Language:</b> ${settings.language}</p>
+    <p>Settings page coming soon...</p>
   `;
 }
