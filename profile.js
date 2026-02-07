@@ -5,17 +5,14 @@ class UserProfile {
       name: "King",
       email: "king@email.com",
       age: 22,
+      dob: "2003-01-01",
       country: "India",
-      skills: ["JavaScript", "Node.js", "Git"],
+      skills: ["JavaScript", "Node.js"],
       avatar: null
     };
   }
 
   getProfile() {
     return this.user;
-  }
-
-  setAvatar(base64Image) {
-    this.user.avatar = base64Image;
   }
 }

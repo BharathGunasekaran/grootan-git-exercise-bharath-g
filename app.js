@@ -1,56 +1,77 @@
 const profileInstance = new UserProfile();
+const settingsInstance = new Settings();
 
-function showHome() {
-  document.getElementById("content").innerHTML = `
-    <h3>Home</h3>
-    <p>Welcome to your dashboard.</p>
+// ---------- AUTH ----------
+
+function showLogin() {
+  content.innerHTML = `
+    <h3>Login</h3>
+    <input id="u" placeholder="Username"><br><br>
+    <input id="p" type="password" placeholder="Password"><br><br>
+    <button onclick="doLogin()">Login</button>
   `;
 }
 
+function doLogin() {
+  if (Auth.login(u.value, p.value)) showHome();
+  else alert("Invalid");
+}
+
+function logout() {
+  Auth.logout();
+  showLogin();
+}
+
+function protect(cb) {
+  if (!Auth.isLoggedIn()) return showLogin();
+  cb();
+}
+
+// ---------- HOME ----------
+
+function showHome() {
+  protect(() => {
+    content.innerHTML = `<h3>Home</h3><p>Welcome!</p>`;
+  });
+}
+
+// ---------- PROFILE ----------
+
 function showProfile() {
-  const user = profileInstance.getProfile();
+  protect(() => {
+    const u = profileInstance.getProfile();
+    content.innerHTML = `
+      <h3>Profile</h3>
 
-  document.getElementById("content").innerHTML = `
-    <h3>Profile</h3>
+      <img id="avatarPreview"
+      src="${u.avatar || 'https://via.placeholder.com/120'}"
+      width="120" style="border-radius:50%"><br><br>
 
-    <img id="avatarPreview"
-         src="${user.avatar || 'https://via.placeholder.com/120'}"
-         width="120"
-         style="border-radius:50%; border:1px solid #ccc"/>
+      <input type="file" onchange="uploadAvatar(event)"><br><br>
 
-    <br/><br/>
-    <input type="file" onchange="uploadAvatar(event)" />
+      <p><b>Name:</b> ${u.name}</p>
+      <p><b>Email:</b> ${u.email}</p>
+      <p><b>Age:</b> ${u.age}</p>
+      <p><b>DOB:</b> ${u.dob}</p>
+      <p><b>Country:</b> ${u.country}</p>
+      <p><b>Skills:</b> ${u.skills.join(", ")}</p>
 
-    <p><b>Name:</b> ${user.name}</p>
-    <p><b>Email:</b> ${user.email}</p>
-    <p><b>Age:</b> ${user.age}</p>
-    <p><b>Country:</b> ${user.country}</p>
-    <p><b>Skills:</b> ${user.skills.join(", ")}</p>
-
-    <button onclick="editProfile()">Edit Profile</button>
-  `;
+      <button onclick="editProfile()">Edit</button>
+    `;
+  });
 }
 
 function editProfile() {
-  const user = profileInstance.getProfile();
-
-  document.getElementById("content").innerHTML = `
+  const u = profileInstance.getProfile();
+  content.innerHTML = `
     <h3>Edit Profile</h3>
 
-    <img id="avatarPreview"
-         src="${user.avatar || 'https://via.placeholder.com/120'}"
-         width="120"
-         style="border-radius:50%; border:1px solid #ccc"/>
-
-    <br/><br/>
-    <input type="file" onchange="uploadAvatar(event)" /><br/><br/>
-
-    Name: <input id="name" value="${user.name}"/><br/><br/>
-    Email: <input id="email" value="${user.email}"/><br/><br/>
-    Age: <input id="age" value="${user.age}"/><br/><br/>
-    Country: <input id="country" value="${user.country}"/><br/><br/>
-    Skills (comma separated): 
-    <input id="skills" value="${user.skills.join(", ")}"/><br/><br/>
+    Name <input id="name" value="${u.name}"><br><br>
+    Email <input id="email" value="${u.email}"><br><br>
+    Age <input id="age" value="${u.age}"><br><br>
+    DOB <input type="date" id="dob" value="${u.dob}"><br><br>
+    Country <input id="country" value="${u.country}"><br><br>
+    Skills <input id="skills" value="${u.skills.join(",")}"><br><br>
 
     <button onclick="saveProfile()">Save</button>
     <button onclick="showProfile()">Cancel</button>
@@ -58,35 +79,43 @@ function editProfile() {
 }
 
 function saveProfile() {
-  const user = profileInstance.getProfile();
-
-  user.name = document.getElementById("name").value;
-  user.email = document.getElementById("email").value;
-  user.age = document.getElementById("age").value;
-  user.country = document.getElementById("country").value;
-  user.skills = document
-    .getElementById("skills")
-    .value.split(",")
-    .map(s => s.trim());
-
+  const u = profileInstance.getProfile();
+  u.name = name.value;
+  u.email = email.value;
+  u.age = age.value;
+  u.dob = dob.value;
+  u.country = country.value;
+  u.skills = skills.value.split(",");
   showProfile();
 }
 
-function uploadAvatar(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-
+function uploadAvatar(e) {
+  const file = e.target.files[0];
   const reader = new FileReader();
-  reader.onload = function (e) {
-    profileInstance.getProfile().avatar = e.target.result;
-    document.getElementById("avatarPreview").src = e.target.result;
+  reader.onload = x => {
+    profileInstance.getProfile().avatar = x.target.result;
+    avatarPreview.src = x.target.result;
   };
   reader.readAsDataURL(file);
 }
 
+// ---------- SETTINGS ----------
+
 function showSettings() {
-  document.getElementById("content").innerHTML = `
-    <h3>Settings</h3>
-    <p>Settings page coming soon...</p>
-  `;
+  protect(() => {
+    const s = settingsInstance.getSettings();
+    content.innerHTML = `
+      <h3>Settings</h3>
+      <p>Theme: ${s.theme}</p>
+      <p>Notifications: ${s.notifications}</p>
+      <p>Language: ${s.language}</p>
+    `;
+  });
 }
+
+// ---------- START ----------
+
+window.onload = () => {
+  if (Auth.isLoggedIn()) showHome();
+  else showLogin();
+};

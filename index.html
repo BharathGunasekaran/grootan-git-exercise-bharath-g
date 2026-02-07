@@ -6,22 +6,21 @@
 </head>
 <body>
 
-  <nav>
-    <h2>My App</h2>
-    <ul>
-      <li onclick="showHome()">Home</li>
-      <li onclick="showProfile()">Profile</li>
-      <li onclick="showSettings()">Settings</li>
-    </ul>
-  </nav>
+<nav>
+  <h2>My App</h2>
+  <ul>
+    <li onclick="showHome()">Home</li>
+    <li onclick="showProfile()">Profile</li>
+    <li onclick="showSettings()">Settings</li>
+    <li onclick="logout()">Logout</li>
+  </ul>
+</nav>
 
-  <div id="content">
-    <h3>Welcome</h3>
-    <p>Select a menu item.</p>
-  </div>
+<div id="content"></div>
 
-  <script src="profile.js"></script>
-  <script src="settings.js"></script>
-  <script src="app.js"></script>
+<script src="profile.js"></script>
+<script src="settings.js"></script>
+<script src="auth.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
