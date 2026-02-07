@@ -20,12 +20,29 @@ function showProfile() {
 }
 
 function showSettings() {
-  const settings = new Settings().getSettings();
+  protect(() => {
+    const s = settingsInstance.getSettings();
 
-  document.getElementById("content").innerHTML = `
-    <h3>Settings</h3>
-    <p><b>Theme:</b> ${settings.theme}</p>
-    <p><b>Notifications:</b> ${settings.notifications ? "On" : "Off"}</p>
-    <p><b>Language:</b> ${settings.language}</p>
-  `;
+    content.innerHTML = `
+      <h3>Settings</h3>
+      <p>Theme: ${s.theme}</p>
+      <p>Notifications: ${s.notifications}</p>
+      <p>Language: ${s.language}</p>
+
+      <h4>Change Password</h4>
+      <input type="password" id="oldPass" placeholder="Old Password"><br><br>
+      <input type="password" id="newPass" placeholder="New Password"><br><br>
+      <button onclick="updatePassword()">Change Password</button>
+    `;
+  });
+}
+
+
+function updatePassword() {
+  const oldP = oldPass.value;
+  const newP = newPass.value;
+
+  const result = settingsInstance.changePassword(oldP, newP);
+
+  alert(result.message);
 }
